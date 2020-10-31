@@ -1,0 +1,40 @@
+{
+  "name": "tracequest",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/node": "^7.12.1",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-decorators": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.1",
+    "@types/chrome": "^0.0.126",
+    "@types/node": "^14.14.6",
+    "babel-plugin-transform-typescript-metadata": "^0.3.1",
+    "parcel-bundler": "^1.12.4",
+    "parcel-plugin-static-files-copy": "^2.5.0",
+    "sass": "^1.28.0",
+    "shelljs": "^0.8.4",
+    "typescript": "^4.0.5"
+  },
+  "scripts": {
+    "dev": "parcel --no-hmr --no-source-maps ./src/extension/Tracequest.html ./src/extension/main.html",
+    "dev:panel": "parcel ./src/extension/Tracequest.html",
+    "build": "parcel build ./src/extension/Tracequest.html ./src/extension/main.html",
+    "dev:run": "babel-node -x \".ts\"",
+    "dev:run:debug": "yarn dev:run --inspect-brk",
+    "package": "yarn dev:run ./scripts/package.ts",
+    "example:simple": "yarn dev:run -r ./src/register.ts ./examples/simple.ts",
+    "example:simple:debug": "yarn dev:run:debug -r ./src/register.ts ./examples/simple.ts"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.8",
+    "@types/react": "^16.9.55",
+    "express": "^4.17.1",
+    "react": "17.0.1",
+    "react-dom": "^17.0.1",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.1"
+  }
+}

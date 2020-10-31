@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tracequest</title>
+  <script src="/.well-known/tracequest/socket.io.js"></script>
+</head>
+<body>
+  <h1>Tracequest examples</h1>
+  <hr />
+  <button id="node-fetch">node-fetch</button>
+  <button id="axios">axios</button>
+  <button id="request">request</button>
+
+  <script>
+    document.getElementById('node-fetch').addEventListener('click', async () => {
+      await fetch('/node-fetch');
+    });
+
+    document.getElementById('axios').addEventListener('click', async () => {
+      await fetch('/axios');
+    });
+
+    document.getElementById('request').addEventListener('click', async () => {
+      await fetch('/request');
+    });
+
+    const socket = io({
+      path: '/.well-known/tracequest'
+    });
+
+    socket.on('end', event => {
+      const pre = document.createElement('pre');
+      pre.textContent = JSON.stringify(event, null, 2);
+      document.body.appendChild(pre);
+    });
+  </script>
+</body>
+</html>
