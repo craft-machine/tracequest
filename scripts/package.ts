@@ -34,7 +34,7 @@ function cleanupDist() {
 }
 
 function buildExtension() {
-  shell.exec("yarn build");
+  shell.exec("yarn build:extension");
 }
 
 function injectVersion() {

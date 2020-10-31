@@ -9,9 +9,8 @@ const Event: FC<PropTypes> = ({ event }) => {
   return (
     <div className="event">
       <h4>
-      {event.request.method} {event.request.href} -> {event.duration}
-    </h4>
-    {/* <pre>{JSON.stringify(event.request.headers, null, 2)}</pre> */}
+        {event.request.method} {event.request.href} -{">"} {event.duration}
+      </h4>
     </div>
   );
 };

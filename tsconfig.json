@@ -4,6 +4,13 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "noEmit": true,
-  }
+    "outDir": "./lib",
+    "declaration": true,
+  },
+  "include": [
+    "src/**/*",
+  ],
+  "exclude": [
+    "src/extension/**/*",
+  ],
 }
