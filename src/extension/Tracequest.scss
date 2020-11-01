@@ -22,12 +22,21 @@ body {
   box-shadow: 0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.3);
 }
 
-.event {
-  background-color: #444;
+.panel {
+  background-color: rgba(255, 255, 255, 0.05);
   padding: 0.5rem 1rem;
+  word-break: break-all;
+}
+
+
+.event {
   margin: 1rem;
 
-  h4 {
+  .event-header {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     margin: 0;
   }
 }
