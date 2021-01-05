@@ -1,17 +1,24 @@
 import React, { FC } from "react";
-import Event from "./Event";
-import { NetworkEvent } from "../../tracing/network";
+import NetworkEvent from "./Event/NetworkEvent";
+import Event from "./Event/Event";
+import TracequestEvent from "../../tracing/TracequestEvent";
 
 type PropTypes = {
-  events: NetworkEvent[];
+  events: TracequestEvent[];
+};
+
+const Components = {
+  network: NetworkEvent,
+  default: Event,
 };
 
 const Events: FC<PropTypes> = ({ events }) => {
   return (
     <>
-      {events.map((event) => (
-        <Event key={event.id} event={event} />
-      ))}
+      {events.map((event) => {
+        const Component = Components[event.type] ?? Components.default;
+        return <Component key={event.id} event={event} />;
+      })}
     </>
   );
 };

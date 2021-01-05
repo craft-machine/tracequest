@@ -27,10 +27,12 @@
     "dev:panel": "parcel ./src/extension/Tracequest.html",
     "build:extension": "parcel build ./src/extension/Tracequest.html ./src/extension/main.html",
     "build:lib": "tsc",
+    "build:docs": "parcel build ./src/docs/index.html -d docs",
     "dev:run": "babel-node -x \".ts\"",
     "dev:run:debug": "yarn dev:run --inspect-brk",
     "package": "yarn dev:run ./scripts/package.ts",
     "example:simple": "yarn dev:run -r ./src/register.ts ./examples/simple.ts",
+    "example:configuration": "yarn dev:run -r ./src/register.ts ./examples/configuration.ts",
     "example:simple:debug": "yarn dev:run:debug -r ./src/register.ts ./examples/simple.ts"
   },
   "dependencies": {

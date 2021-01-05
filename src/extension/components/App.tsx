@@ -4,7 +4,7 @@ import { getMockEvents, getOrigin, isDevTools } from "../util";
 import Events from "./Events";
 
 export default function App() {
-  const [origin, setOrigin] = useState('');
+  const [origin, setOrigin] = useState("");
   const [isConnected, setIsConnected] = useState(false);
   const [events, setEvents] = useState([]);
 
@@ -20,23 +20,31 @@ export default function App() {
         setIsConnected(true);
       });
 
-      socket.on('disconnect', () => {
+      socket.on("disconnect", () => {
         setIsConnected(false);
       });
 
       socket.on("linking", (newEvent) => {
-        setEvents(old => [newEvent, ...old]);
+        setEvents((old) => [newEvent, ...old]);
       });
 
       socket.on("end", (newEvent) => {
-        setEvents(old => old.map(e => e.id === newEvent.id ? newEvent : e));
+        setEvents((old) =>
+          old.map((e) => (e.id === newEvent.id ? newEvent : e))
+        );
+      });
+
+      socket.on("stop", (newEvent) => {
+        setEvents((old) => [newEvent, ...old]);
       });
     });
   }, []);
 
   return (
     <>
-      <h4 className="status-header">{origin} {isConnected && ' - connected'}</h4>
+      <h4 className="status-header">
+        {origin} {isConnected && " - connected"}
+      </h4>
       <main>
         <Events events={events} />
       </main>

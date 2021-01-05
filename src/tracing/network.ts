@@ -2,10 +2,12 @@ import { EventEmitter } from "events";
 import { inherits } from "util";
 import { parse } from "url";
 import { IncomingMessage } from "http";
-import zlib from 'zlib';
+import zlib from "zlib";
 
 // @ts-ignore part of node.js internals
 import internalHttpClient from "_http_client";
+import TracequestNetworkEvent from "./TracequestNetworkEvent";
+import utils from "./utils";
 
 const events = new EventEmitter();
 const mod = {
@@ -25,28 +27,6 @@ export enum NetworkEvents {
   LINKING = "linking",
   END = "end",
 }
-
-export type NetworkEvent = {
-  id: string;
-  start: number;
-  end: number;
-  duration: number;
-  state: EventState;
-  error: Error | null;
-
-  request: {
-    href: string;
-    method: string;
-    headers: Record<string, string | string[]>;
-    body: string;
-  };
-
-  response: {
-    status: number;
-    headers: Record<string, string | string[]>;
-    body: string;
-  };
-};
 
 export default mod;
 
@@ -113,22 +93,22 @@ export function start() {
     }
 
     const event = startEvent();
-    
-    event.request.href = getHref(options);
-    event.request.headers = options.headers;
-    event.request.method = options.method;
+
+    event.meta.request.href = getHref(options);
+    event.meta.request.headers = options.headers;
+    event.meta.request.method = options.method;
 
     let error: Error | undefined;
     try {
       Client.call(this, options, (res: IncomingMessage) => {
-        event.response.headers = res.headers;
-        event.response.status = res.statusCode;
-        event.state = EventState.LINKING;
+        event.meta.response.headers = res.headers;
+        event.meta.response.status = res.statusCode;
+        event.meta.state = EventState.LINKING;
 
         events.emit("linked", event);
 
         res.on("data", (data) => {
-          event.response.body = concatData(event.response.body, data);
+          event.meta.response.body = concatData(event.meta.response.body, data);
 
           events.emit("receiving", event);
         });
@@ -142,7 +122,7 @@ export function start() {
     events.emit("linking", event);
 
     const handleOutgoingData = (data: string | Buffer) => {
-      event.request.body = concatData(event.request.body, data);
+      event.meta.request.body = concatData(event.meta.request.body, data);
 
       events.emit("sending", event);
     };
@@ -180,52 +160,56 @@ export function start() {
   return events;
 }
 
-export function startEvent(): NetworkEvent {
+export function startEvent(): TracequestNetworkEvent {
   return {
-    id: Math.random().toString(16).replace(".", ""),
+    id: utils.generateId(16),
+    type: "network",
+
     start: Date.now(),
     end: null,
     duration: null,
-    state: EventState.LINKING,
-    error: null,
 
-    request: {
-      href: null,
-      method: null,
-      headers: {},
-      body: null,
-    },
+    meta: {
+      state: EventState.LINKING,
 
-    response: {
-      status: null,
-      headers: {},
-      body: null,
+      request: {
+        href: null,
+        method: null,
+        headers: {},
+        body: null,
+      },
+
+      response: {
+        status: null,
+        headers: {},
+        body: null,
+      },
     },
   };
 }
 
-export function setError(event: NetworkEvent, error: Error) {
+export function setError(event: TracequestNetworkEvent, error: Error) {
   endEvent(event);
-  event.state = EventState.ERROR;
-  event.error = error;
+  event.meta.state = EventState.ERROR;
+  event.meta.error = error;
 }
 
-export function endEvent(event: NetworkEvent) {
-  event.state = EventState.ENDED;
+export function endEvent(event: TracequestNetworkEvent) {
+  event.meta.state = EventState.ENDED;
   event.end = Date.now();
   event.duration = event.end - event.start;
 }
 
-export function concatData(prefix: string = '', data: string | Buffer) {
-  return (prefix || '') + dataToString(data);
+export function concatData(prefix: string = "", data: string | Buffer) {
+  return (prefix || "") + dataToString(data);
 }
 
 export function dataToString(data: string | Buffer) {
   if (data instanceof Buffer) {
     try {
       return zlib.unzipSync(data).toString();
-    } catch(e) {
-      return data.toString('utf-8');
+    } catch (e) {
+      return data.toString("utf-8");
     }
   }
 
@@ -233,5 +217,7 @@ export function dataToString(data: string | Buffer) {
 }
 
 export function getHref(options) {
-  return options.href || `${options.protocol}${options.hostname}${options.path}`;
+  return (
+    options.href || `${options.protocol}${options.hostname}${options.path}`
+  );
 }
