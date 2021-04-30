@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import Trace from "./Trace/Trace";
 import NetworkEvent from "./Event/NetworkEvent";
 import Event from "./Event/Event";
 import TracequestEvent from "../../tracing/TracequestEvent";
@@ -15,6 +16,9 @@ const Components = {
 const Events: FC<PropTypes> = ({ events }) => {
   return (
     <>
+      {/* <Trace
+        events={events}
+      /> */}
       {events.map((event) => {
         const Component = Components[event.type] ?? Components.default;
         return <Component key={event.id} event={event} />;

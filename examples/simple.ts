@@ -5,7 +5,7 @@ import request from "request";
 
 import path from "path";
 import tracequest from "../src";
-import compute from './lib/module';
+import targets from './lib/targets';
 
 const app = express();
 const port = 3000;
@@ -14,7 +14,7 @@ app.use(tracequest);
 app.use(express.static(path.resolve(__dirname, "public")));
 
 app.get("/node-fetch", async (req, res) => {
-  await compute();
+  await targets.compute();
   await fetch("https://example.com");
 
   return res.send({
